@@ -68,9 +68,9 @@ export function MatchPane() {
   });
 
   return (
-    <div class="p-5 h-[inherit] w-md border-r border-r-solid border-r-slate-2">
+    <div class="p-5 h-[inherit] overflow-y-auto w-md border-r border-r-solid border-r-slate-2">
       <PaneHeader title="Matches" class="-mx-5 -mt-5 -top-5" />
-      <div class="flex flex-col gap-row-2 overflow-y-auto">
+      <div class="flex flex-col gap-row-2">
         <Switch>
           <Match when={!isEmpty(errors())}>
             <div>{errors()}</div>
