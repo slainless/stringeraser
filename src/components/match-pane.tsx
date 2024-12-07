@@ -70,8 +70,28 @@ export function MatchPane() {
             <div class="text-foreground/30">No matching pattern found</div>
           </Match>
           <Match when={matches()}>
-            <Index each={matches()}>
+            <For each={matches()}>
               {(item) => {
+                const { start, end } = item;
+
+                let lower: number;
+                let upper: number;
+
+                const viewLength = 40;
+                const matchLength = end - start;
+                if (matchLength >= viewLength) {
+                  lower = start;
+                  upper = end;
+                } else {
+                  const pads = viewLength - matchLength;
+                  const lowerPads = Math.floor(pads / 2);
+                  const upperPads = pads - lowerPads;
+
+                  lower = start - lowerPads;
+                  upper = end + upperPads;
+                }
+
+                const sliced = store.text.slice(lower, upper + 1);
                 return (
                   <div class="grid grid-cols-[max-content_auto] gap-col-2 w-full">
                     <div class="flex items-center justify-center">
@@ -81,17 +101,17 @@ export function MatchPane() {
                     </div>
                     <div>
                       <div>
-                        <span>abracadabra is magical.</span>
+                        <span>{sliced}</span>
                       </div>
                       <div class="text-xs">
                         <span>Matched with: </span>
-                        <span>{item().match}</span>
+                        <span>{item.match}</span>
                       </div>
                     </div>
                   </div>
                 );
               }}
-            </Index>
+            </For>
           </Match>
         </Switch>
       </div>
