@@ -6,6 +6,7 @@ import { StoreProvider } from "./components/store-provider";
 import { ToolbarPane } from "./components/toolbar-pane";
 import { MatchPane } from "./components/match-pane";
 import { TextPane } from "./components/text-pane";
+import { PaneHeader } from "./components/pane-header";
 
 function App() {
   return (
@@ -15,8 +16,11 @@ function App() {
           <ToolbarPane />
           <MatchPane />
         </div>
-        <div class="overflow-x-auto">
-          <TextPane />
+        <div class="min-h-[100vh] bg-slate-1">
+          <PaneHeader title="Text" class="mb-0" />
+          <div class="overflow-x-auto">
+            <TextPane />
+          </div>
         </div>
       </StoreProvider>
     </div>

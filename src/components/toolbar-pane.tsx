@@ -2,6 +2,7 @@ import { createMemo, useContext } from "solid-js";
 import { TextArea } from "./ui/textarea";
 import { TextFieldLabel, TextFieldRoot } from "./ui/textfield";
 import { StoreContext } from "./store";
+import { PaneHeader } from "./pane-header";
 
 export function ToolbarPane() {
   const { store, setPatterns } = useContext(StoreContext);
@@ -13,6 +14,7 @@ export function ToolbarPane() {
 
   return (
     <div class="p-5 min-h-[inherit] border-r-slate-2 border-r border-r-solid">
+      <PaneHeader title="Patterns" class="-mx-5 -mt-5" />
       <TextFieldRoot class="mb-5">
         <TextFieldLabel>Normal string patterns</TextFieldLabel>
         <TextArea

@@ -1,5 +1,6 @@
 import { createEffect, createMemo, useContext } from "solid-js";
 import { StoreContext } from "./store";
+import { PaneHeader } from "./pane-header";
 
 export function TextPane() {
   const { store, setText } = useContext(StoreContext);
@@ -15,12 +16,12 @@ export function TextPane() {
   });
 
   return (
-    <div style={{ position: "relative" }}>
+    <div class="p-5 relative">
       <span
         ref={contentBox}
         contentEditable={!shouldBeLocked()}
         class={
-          "p-5 outline-none bg-slate-1 inline-block w-full min-h-[100vh] overflow-x-auto whitespace-pre-wrap"
+          "outline-none inline-block w-full overflow-x-auto whitespace-pre-wrap"
         }
         onpaste={(event) => {
           event.preventDefault();
