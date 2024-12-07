@@ -2,11 +2,11 @@ import "./App.css";
 import "uno.css";
 import "@unocss/reset/sanitize/sanitize.css";
 import "@unocss/reset/sanitize/assets.css";
+import "@unocss/reset/tailwind-compat.css";
 import { StoreProvider } from "./components/store-provider";
 import { ToolbarPane } from "./components/toolbar-pane";
 import { MatchPane } from "./components/match-pane";
 import { TextPane } from "./components/text-pane";
-import { PaneHeader } from "./components/pane-header";
 
 function App() {
   return (
