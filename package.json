@@ -1,14 +1,19 @@
 {
-  "name": "stringeraser-app",
+  "name": "stringeraser",
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "repository": {
+    "url": "https://github.com/slainless/stringeraser"
+  },
   "scripts": {
+    "vite:build": "vite build",
     "dev": "vite",
-    "build": "vite build",
-    "build:singlefile": "SINGLEFILE=true vite build",
+    "build": "bun --env-file=.env run vite:build",
+    "build:singlefile": "SINGLEFILE=true ASSET_BASE=./ vite build",
     "preview": "vite preview",
-    "test": "vitest"
+    "test": "vitest",
+    "deploy": "bun run build && bunx gh-pages -d dist"
   },
   "dependencies": {
     "@kobalte/core": "^0.13.7",

@@ -11,4 +11,5 @@ export default defineConfig({
       "@": resolve(__dirname, "./src"),
     },
   },
+  base: process.env.ASSET_BASE,
 });
