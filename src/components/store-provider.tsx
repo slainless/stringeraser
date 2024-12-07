@@ -14,7 +14,11 @@ export function StoreProvider(props: ParentProps) {
       setValue("lookup", { strings, regexps });
     },
     clearSelections() {
-      setValue("selections", {});
+      setValue(
+        produce((store) => {
+          store.selections = {};
+        }),
+      );
     },
     select(match, select) {
       if (match.index == null) return;
