@@ -39,7 +39,9 @@ export function MatchPaneItem(props: MatchPaneItemProps) {
           </div>
           <div class="text-xs">
             <span>Matched with: </span>
-            <span>{props.item.match}</span>
+            <span>
+              <code>{props.item.regexp?.toString() ?? props.item.match}</code>
+            </span>
           </div>
         </div>
       </CheckboxLabel>
