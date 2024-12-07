@@ -13,6 +13,13 @@ export function StoreProvider(props: ParentProps) {
     setPatterns(strings, regexps) {
       setValue("lookup", { strings, regexps });
     },
+    setMatches(matches) {
+      setValue(
+        produce((store) => {
+          store.matches = matches;
+        }),
+      );
+    },
     clearSelections() {
       setValue(
         produce((store) => {

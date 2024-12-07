@@ -20,7 +20,8 @@ import { Button } from "./ui/button";
 import { strip } from "@/core/stripper";
 
 export function MatchPane() {
-  const { store, clearSelections, setText, select } = useContext(StoreContext);
+  const { store, clearSelections, setText, setMatches, select } =
+    useContext(StoreContext);
   const [errors, setErrors] = createSignal<JSX.Element>();
 
   const filteredPatterns = createMemo(() => {
@@ -42,32 +43,38 @@ export function MatchPane() {
     }),
   );
 
-  const matches = createMemo(() => {
+  createEffect(() => {
     const unsafe: string[] = [];
     for (const regexp of filteredRegexps())
       if (safeRegex(regexp) === false) unsafe.push(regexp);
 
-    if (unsafe.length > 0) {
-      setErrors(
-        <div class="text-red-6">
-          <div>Some of the regexp patterns are unsafe:</div>
-          <Index each={unsafe}>
-            {(item) => (
-              <div>
-                <code>{item()}</code>
-              </div>
-            )}
-          </Index>
-        </div>,
-      );
-      return [];
-    }
+    if (unsafe.length < 1) return;
+
+    setErrors(
+      <div class="text-red-6">
+        <div>Some of the regexp patterns are unsafe:</div>
+        <Index each={unsafe}>
+          {(item) => (
+            <div>
+              <code>{item()}</code>
+            </div>
+          )}
+        </Index>
+      </div>,
+    );
+    return [];
+  });
+
+  createEffect(() => {
+    if (errors() != null) return;
 
     const matcher = new Matcher(filteredPatterns(), filteredRegexps());
-    return matcher.findMatches(store.text).map((match, index) => {
+    const matches = matcher.findMatches(store.text).map((match, index) => {
       match.index = index;
       return match;
     });
+
+    setMatches(matches);
   });
 
   const selectionLength = () => Object.keys(store.selections).length;
@@ -77,12 +84,12 @@ export function MatchPane() {
     <div class="p-5 h-[inherit] overflow-y-auto w-md border-r border-r-solid border-r-slate-2">
       <div class="-mx-5 -mt-5 -top-5 sticky top-0 mb-5">
         <PaneHeader title="Matches" class="position-initial mb-0" />
-        <Show when={matches()?.length > 0}>
+        <Show when={store.matches?.length > 0}>
           <div class="p-3 bg-slate-2/50 backdrop-blur flex gap-2">
             <Button
               variant={"default"}
               onClick={(event) => {
-                select(matches(), selectionLength() < 1);
+                select(store.matches, selectionLength() < 1);
               }}
             >
               {selectionLength() > 0 ? "Unselect all" : "Select all"}
@@ -114,11 +121,11 @@ export function MatchPane() {
               Fill text & lookup pattern first
             </div>
           </Match>
-          <Match when={matches().length < 1}>
+          <Match when={store.matches.length < 1}>
             <div class="text-foreground/30">No matching pattern found</div>
           </Match>
-          <Match when={matches()}>
-            <For each={matches()}>
+          <Match when={store.matches.length > 0}>
+            <For each={store.matches}>
               {(item) => <MatchPaneItem item={item} text={store.text} />}
             </For>
           </Match>
