@@ -76,22 +76,41 @@ export function MatchPane() {
 
                 let lower: number;
                 let upper: number;
+                let lowerPads = 0;
+                let upperPads = 0;
 
                 const viewLength = 40;
                 const matchLength = end - start;
                 if (matchLength >= viewLength) {
                   lower = start;
-                  upper = end;
+                  upper = Math.min(start + viewLength, end);
                 } else {
                   const pads = viewLength - matchLength;
-                  const lowerPads = Math.floor(pads / 2);
-                  const upperPads = pads - lowerPads;
+                  lowerPads = Math.floor(pads / 2);
+                  upperPads = pads - lowerPads;
 
-                  lower = start - lowerPads;
-                  upper = end + upperPads;
+                  lower = start;
+                  upper = end;
                 }
 
-                const sliced = store.text.slice(lower, upper + 1);
+                const sliced =
+                  store.text.slice(lower, upper + 1) +
+                  (matchLength >= viewLength ? "..." : "");
+                const lowerPadSliced = store.text.slice(
+                  lower - lowerPads,
+                  lower,
+                );
+                const upperPadSliced = store.text.slice(
+                  upper + 1,
+                  upper + upperPads + 1,
+                );
+                const prefix =
+                  lower > 0 && matchLength < viewLength ? "..." : "";
+                const suffix =
+                  upper < store.text.length - 1 && matchLength < viewLength
+                    ? "..."
+                    : "";
+
                 return (
                   <div class="grid grid-cols-[max-content_auto] gap-col-2 w-full">
                     <div class="flex items-center justify-center">
@@ -101,7 +120,13 @@ export function MatchPane() {
                     </div>
                     <div>
                       <div>
-                        <span>{sliced}</span>
+                        <span>
+                          <span>{prefix}</span>
+                          <span>{lowerPadSliced}</span>
+                          <span class="bg-blue-2 px-2">{sliced}</span>
+                          <span>{upperPadSliced}</span>
+                          <span>{suffix}</span>
+                        </span>
                       </div>
                       <div class="text-xs">
                         <span>Matched with: </span>
