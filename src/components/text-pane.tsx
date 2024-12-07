@@ -6,6 +6,8 @@ export function TextPane() {
   const text = createMemo(() => store.text);
   let contentBox!: HTMLSpanElement;
 
+  const shouldBeLocked = () => Object.keys(store.selections).length > 0;
+
   createEffect(() => {
     if (contentBox == null) return;
     if (contentBox.textContent === text()) return;
@@ -16,7 +18,7 @@ export function TextPane() {
     <div style={{ position: "relative" }}>
       <span
         ref={contentBox}
-        contentEditable
+        contentEditable={!shouldBeLocked()}
         class={
           "p-5 outline-none bg-slate-1 inline-block w-full min-h-[100vh] overflow-x-auto whitespace-pre-wrap"
         }
