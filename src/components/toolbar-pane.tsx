@@ -3,8 +3,6 @@ import { TextArea } from "./ui/textarea";
 import { TextFieldLabel, TextFieldRoot } from "./ui/textfield";
 import { StoreContext } from "./store";
 import { PaneHeader } from "./pane-header";
-import { Button } from "./ui/button";
-import { strip } from "@/core/stripper";
 
 export function ToolbarPane() {
   const { store, setPatterns, setText } = useContext(StoreContext);
