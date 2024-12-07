@@ -17,10 +17,7 @@ function App() {
           <MatchPane />
         </div>
         <div class="min-h-[100vh] bg-slate-1">
-          <PaneHeader title="Text" class="mb-0" />
-          <div class="overflow-x-auto">
-            <TextPane />
-          </div>
+          <TextPane />
         </div>
       </StoreProvider>
     </div>
