@@ -17,6 +17,12 @@ export function MatchPane() {
   const { store } = useContext(StoreContext);
   const [errors, setErrors] = createSignal<JSX.Element>();
 
+  const filteredPatterns = createMemo(() => {
+    return store.lookup.strings.filter(
+      (string) => string != null && string !== "",
+    );
+  });
+
   const filteredRegexps = createMemo(() => {
     return store.lookup.regexps.filter(
       (regexp) => regexp != null && regexp !== "",
@@ -45,7 +51,7 @@ export function MatchPane() {
       return [];
     }
 
-    const matcher = new Matcher(store.lookup.strings, filteredRegexps());
+    const matcher = new Matcher(filteredPatterns(), filteredRegexps());
     return matcher.findMatches(store.text);
   });
 
@@ -59,7 +65,7 @@ export function MatchPane() {
           <Match
             when={
               isEmpty(store.text) ||
-              (isEmpty(store.lookup.strings) && isEmpty(filteredRegexps()))
+              (isEmpty(filteredPatterns()) && isEmpty(filteredRegexps()))
             }
           >
             <div class="text-foreground/30">
@@ -86,7 +92,7 @@ export function MatchPane() {
                   upper = Math.min(start + viewLength, end);
                 } else {
                   const pads = viewLength - matchLength;
-                  lowerPads = Math.floor(pads / 2);
+                  lowerPads = Math.floor((pads * 30) / 100);
                   upperPads = pads - lowerPads;
 
                   lower = start;
@@ -123,7 +129,7 @@ export function MatchPane() {
                         <span>
                           <span>{prefix}</span>
                           <span>{lowerPadSliced}</span>
-                          <span class="bg-blue-2 px-2">{sliced}</span>
+                          <span class="bg-blue-2">{sliced}</span>
                           <span>{upperPadSliced}</span>
                           <span>{suffix}</span>
                         </span>
