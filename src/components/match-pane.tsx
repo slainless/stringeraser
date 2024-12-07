@@ -9,9 +9,9 @@ import {
   Switch,
   useContext,
 } from "solid-js";
-import { Checkbox, CheckboxControl } from "./ui/checkbox";
 import { StoreContext } from "./store";
 import { safeRegex } from "safe-regex2";
+import { MatchPaneItem } from "./match-pane-item";
 
 export function MatchPane() {
   const { store } = useContext(StoreContext);
@@ -77,71 +77,7 @@ export function MatchPane() {
           </Match>
           <Match when={matches()}>
             <For each={matches()}>
-              {(item) => {
-                const { start, end } = item;
-
-                let lower: number;
-                let upper: number;
-                let lowerPads = 0;
-                let upperPads = 0;
-
-                const viewLength = 40;
-                const matchLength = end - start;
-                if (matchLength >= viewLength) {
-                  lower = start;
-                  upper = Math.min(start + viewLength, end);
-                } else {
-                  const pads = viewLength - matchLength;
-                  lowerPads = Math.floor((pads * 30) / 100);
-                  upperPads = pads - lowerPads;
-
-                  lower = start;
-                  upper = end;
-                }
-
-                const sliced =
-                  store.text.slice(lower, upper + 1) +
-                  (matchLength >= viewLength ? "..." : "");
-                const lowerPadSliced = store.text.slice(
-                  lower - lowerPads,
-                  lower,
-                );
-                const upperPadSliced = store.text.slice(
-                  upper + 1,
-                  upper + upperPads + 1,
-                );
-                const prefix =
-                  lower > 0 && matchLength < viewLength ? "..." : "";
-                const suffix =
-                  upper < store.text.length - 1 && matchLength < viewLength
-                    ? "..."
-                    : "";
-
-                return (
-                  <div class="grid grid-cols-[max-content_auto] gap-col-2 w-full">
-                    <div class="flex items-center justify-center">
-                      <Checkbox>
-                        <CheckboxControl />
-                      </Checkbox>
-                    </div>
-                    <div>
-                      <div>
-                        <span>
-                          <span>{prefix}</span>
-                          <span>{lowerPadSliced}</span>
-                          <span class="bg-blue-2">{sliced}</span>
-                          <span>{upperPadSliced}</span>
-                          <span>{suffix}</span>
-                        </span>
-                      </div>
-                      <div class="text-xs">
-                        <span>Matched with: </span>
-                        <span>{item.match}</span>
-                      </div>
-                    </div>
-                  </div>
-                );
-              }}
+              {(item) => <MatchPaneItem item={item} text={store.text} />}
             </For>
           </Match>
         </Switch>
