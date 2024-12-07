@@ -17,7 +17,10 @@ export function TextPane() {
 
   return (
     <div>
-      <PaneHeader title="Text" class="mb-0" />
+      <PaneHeader
+        title={shouldBeLocked() ? "Text (Locked)" : "Text"}
+        class="mb-0"
+      />
       <div class="p-5 relative overflow-x-auto">
         <span
           ref={contentBox}

@@ -14,7 +14,10 @@ export function ToolbarPane() {
 
   return (
     <div class="p-5 min-h-[inherit] border-r-slate-2 border-r border-r-solid">
-      <PaneHeader title="Patterns" class="-mx-5 -mt-5" />
+      <PaneHeader
+        title={shouldBeLocked() ? "Patterns (Locked)" : "Patterns"}
+        class="-mx-5 -mt-5"
+      />
       <TextFieldRoot class="mb-5">
         <TextFieldLabel>Normal string patterns</TextFieldLabel>
         <TextArea
