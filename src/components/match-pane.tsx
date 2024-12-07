@@ -1,16 +1,44 @@
 import type { Matcher } from "@/core/matcher";
 import { For, Index } from "solid-js";
 import { Checkbox, CheckboxControl } from "./ui/checkbox";
+import { StoreContext } from "./store";
+import { safeRegex } from "safe-regex2";
 
 export function MatchPane() {
-  const matches: Matcher.Match[] = Array(20)
-    .fill(0)
-    .map(() => ({
-      end: 0,
-      match: "abra",
-      start: 1,
-      regexp: /ical\.$/g,
-    }));
+  const { store } = useContext(StoreContext);
+  const [errors, setErrors] = createSignal<JSX.Element>();
+
+  const filteredRegexps = createMemo(() => {
+    return store.lookup.regexps.filter(
+      (regexp) => regexp != null && regexp !== "",
+    );
+  });
+
+  const matches = createMemo(() => {
+    setErrors();
+    const unsafe: string[] = [];
+    for (const regexp of filteredRegexps())
+      if (safeRegex(regexp) === false) unsafe.push(regexp);
+
+    if (unsafe.length > 0) {
+      setErrors(
+        <div class="text-red-6">
+          <div>Some of the regexp patterns are unsafe:</div>
+          <Index each={unsafe}>
+            {(item) => (
+              <div>
+                <code>{item()}</code>
+              </div>
+            )}
+          </Index>
+        </div>,
+      );
+      return [];
+    }
+
+    const matcher = new Matcher(store.lookup.strings, filteredRegexps());
+    return matcher.findMatches(store.text);
+  });
 
   return (
     <div class="p-5 h-[inherit] w-md overflow-y-auto border-r border-r-solid border-r-slate-2">
