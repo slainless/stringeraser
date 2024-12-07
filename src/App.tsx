@@ -8,9 +8,9 @@ import { MatchPane } from "./components/match-pane";
 
 function App() {
   return (
-    <div class="min-h-[100vh]">
+    <div class="grid grid-cols-[max-content_auto] min-h-[100vh]">
       <StoreProvider>
-        <div class="fixed grid grid-cols-[max-content_max-content] h-[100vh]">
+        <div class="sticky top-0 left-0 grid grid-cols-[max-content_max-content] h-[100vh] *:sticky">
           <ToolbarPane />
           <MatchPane />
         </div>
