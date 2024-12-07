@@ -1,11 +1,13 @@
 import { Matcher } from "@/core/matcher";
 import {
+  createEffect,
   createMemo,
   createSignal,
   For,
   Index,
   type JSX,
   Match,
+  on,
   Switch,
   useContext,
 } from "solid-js";
@@ -14,7 +16,7 @@ import { safeRegex } from "safe-regex2";
 import { MatchPaneItem } from "./match-pane-item";
 
 export function MatchPane() {
-  const { store } = useContext(StoreContext);
+  const { store, clearSelections } = useContext(StoreContext);
   const [errors, setErrors] = createSignal<JSX.Element>();
 
   const filteredPatterns = createMemo(() => {
@@ -29,8 +31,14 @@ export function MatchPane() {
     );
   });
 
+  createEffect(
+    on([filteredPatterns, filteredRegexps, () => store.text], () => {
+      clearSelections();
+      setErrors();
+    }),
+  );
+
   const matches = createMemo(() => {
-    setErrors();
     const unsafe: string[] = [];
     for (const regexp of filteredRegexps())
       if (safeRegex(regexp) === false) unsafe.push(regexp);
