@@ -1,5 +1,7 @@
 import type { Matcher } from "@/core/matcher";
 import { Checkbox, CheckboxControl } from "./ui/checkbox";
+import { useContext } from "solid-js";
+import { StoreContext } from "./store";
 
 export interface MatchPaneItemProps {
   item: Matcher.Match;
@@ -7,11 +9,18 @@ export interface MatchPaneItemProps {
 }
 
 export function MatchPaneItem(props: MatchPaneItemProps) {
+  const { store, select } = useContext(StoreContext);
   const slices = slice(props.item, props.text);
+
   return (
     <div class="grid grid-cols-[max-content_auto] gap-col-2 w-full">
       <div class="flex items-center justify-center">
-        <Checkbox>
+        <Checkbox
+          checked={props.item.index?.toString()! in store.selections}
+          onChange={(checked) => {
+            select(props.item, checked);
+          }}
+        >
           <CheckboxControl />
         </Checkbox>
       </div>
