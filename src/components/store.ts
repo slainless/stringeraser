@@ -26,7 +26,7 @@ export interface StoreContext {
   setText(string: string): void;
   setPatterns(strings: string[], regexps: string[]): void;
   clearSelections(): void;
-  select(match: Matcher.Match, select: boolean): void;
+  select(match: Matcher.Match | Matcher.Match[], select: boolean): void;
 }
 
 export const StoreContext = createContext<StoreContext>({

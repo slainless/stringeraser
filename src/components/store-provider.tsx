@@ -20,17 +20,19 @@ export function StoreProvider(props: ParentProps) {
         }),
       );
     },
-    select(match, select) {
-      if (match.index == null) return;
+    select(matches, select) {
+      setValue(
+        "selections",
+        produce((selection) => {
+          for (const match of Array.isArray(matches) ? matches : [matches]) {
+            if (match.index == null) continue;
 
-      if (select) setValue("selections", match.index.toString(), match);
-      else
-        setValue(
-          "selections",
-          produce((selection) => {
-            delete selection[match.index!.toString()];
-          }),
-        );
+            const index = match.index!.toString();
+            if (select) selection[index] = match;
+            else delete selection[index];
+          }
+        }),
+      );
     },
   };
 
