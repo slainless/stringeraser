@@ -1,4 +1,4 @@
-import { createEffect, createMemo, createSignal, useContext } from "solid-js";
+import { createEffect, createMemo, useContext } from "solid-js";
 import { StoreContext } from "./store";
 
 export function TextPane() {
