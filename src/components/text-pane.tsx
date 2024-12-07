@@ -1,10 +1,14 @@
 import { createEffect, createMemo, useContext } from "solid-js";
 import { StoreContext } from "./store";
 import { PaneHeader } from "./pane-header";
+import type { Matcher } from "@/core/matcher";
 
 export function TextPane() {
   const { store, setText } = useContext(StoreContext);
-  const text = createMemo(() => store.text);
+  const text = () => store.text;
+  const matches = () => store.matches;
+  const selections = () => store.selections;
+
   let contentBox!: HTMLSpanElement;
 
   const shouldBeLocked = () => Object.keys(store.selections).length > 0;
@@ -13,6 +17,26 @@ export function TextPane() {
     if (contentBox == null) return;
     if (contentBox.textContent === text()) return;
     contentBox.textContent = text();
+  });
+
+  createEffect(() => {
+    if (matches().length < 1) {
+      contentBox.textContent = text();
+      return;
+    }
+
+    const sequences = tagSequences(matches(), selections());
+
+    let build = "";
+    let lastIndex = 0;
+    for (const seq of sequences) {
+      build += text().slice(lastIndex, seq.index) + seq.tag;
+      lastIndex = seq.index;
+    }
+
+    build += text().slice(lastIndex);
+
+    contentBox.innerHTML = build;
   });
 
   return (
@@ -61,4 +85,25 @@ export function TextPane() {
       </div>
     </div>
   );
+}
+
+function tagSequences(
+  matches: Matcher.Match[],
+  selections: Record<string, Matcher.Match>,
+) {
+  const ordered = [...matches].sort((a, b) => a.start - b.start);
+
+  const sequences: { index: number; tag: string }[] = [];
+  for (const match of ordered) {
+    sequences.push({
+      index: match.start,
+      tag: `<span class="${match.index! in selections ? "bg-red-2" : "bg-blue-2"}">`,
+    });
+    sequences.push({
+      index: match.end + 1,
+      tag: "</span>",
+    });
+  }
+
+  return sequences.sort((a, b) => a.index - b.index);
 }
