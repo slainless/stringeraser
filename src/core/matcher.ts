@@ -80,5 +80,6 @@ export namespace Matcher {
     start: number;
     end: number;
     regexp?: RegExp;
+    index?: number;
   }
 }

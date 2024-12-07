@@ -52,7 +52,10 @@ export function MatchPane() {
     }
 
     const matcher = new Matcher(filteredPatterns(), filteredRegexps());
-    return matcher.findMatches(store.text);
+    return matcher.findMatches(store.text).map((match, index) => {
+      match.index = index;
+      return match;
+    });
   });
 
   return (
