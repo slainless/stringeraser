@@ -7,36 +7,7 @@ export interface MatchPaneItemProps {
 }
 
 export function MatchPaneItem(props: MatchPaneItemProps) {
-  const { start, end } = props.item;
-
-  let lower: number;
-  let upper: number;
-  let lowerPads = 0;
-  let upperPads = 0;
-
-  const viewLength = 40;
-  const matchLength = end - start;
-  if (matchLength >= viewLength) {
-    lower = start;
-    upper = Math.min(start + viewLength, end);
-  } else {
-    const pads = viewLength - matchLength;
-    lowerPads = Math.floor((pads * 30) / 100);
-    upperPads = pads - lowerPads;
-
-    lower = start;
-    upper = end;
-  }
-
-  const sliced =
-    props.text.slice(lower, upper + 1) +
-    (matchLength >= viewLength ? "..." : "");
-  const lowerPadSliced = props.text.slice(lower - lowerPads, lower);
-  const upperPadSliced = props.text.slice(upper + 1, upper + upperPads + 1);
-  const prefix = lower > 0 && matchLength < viewLength ? "..." : "";
-  const suffix =
-    upper < props.text.length - 1 && matchLength < viewLength ? "..." : "";
-
+  const slices = slice(props.item, props.text);
   return (
     <div class="grid grid-cols-[max-content_auto] gap-col-2 w-full">
       <div class="flex items-center justify-center">
@@ -47,11 +18,11 @@ export function MatchPaneItem(props: MatchPaneItemProps) {
       <div>
         <div>
           <span>
-            <span>{prefix}</span>
-            <span>{lowerPadSliced}</span>
-            <span class="bg-blue-2">{sliced}</span>
-            <span>{upperPadSliced}</span>
-            <span>{suffix}</span>
+            <span>{slices.prefix}</span>
+            <span>{slices.lowerPad}</span>
+            <span class="bg-blue-2">{slices.match}</span>
+            <span>{slices.upperPad}</span>
+            <span>{slices.suffix}</span>
           </span>
         </div>
         <div class="text-xs">
@@ -61,4 +32,55 @@ export function MatchPaneItem(props: MatchPaneItemProps) {
       </div>
     </div>
   );
+}
+
+function slice(item: Matcher.Match, text: string) {
+  const bounds = calculateSliceBound(item, 40);
+
+  let match = text.slice(bounds.lower, bounds.upper + 1);
+  if (bounds.isOverflow) match += "...";
+
+  const lowerPad = text.slice(bounds.lower - bounds.lowerPads, bounds.lower);
+  const upperPad = text.slice(
+    bounds.upper + 1,
+    bounds.upper + bounds.upperPads + 1,
+  );
+  const prefix = bounds.lower > 0 && !bounds.isOverflow ? "..." : "";
+  const suffix =
+    bounds.upper < text.length - 1 && !bounds.isOverflow ? "..." : "";
+
+  return {
+    match,
+    lowerPad,
+    upperPad,
+    prefix,
+    suffix,
+  };
+}
+
+function calculateSliceBound(
+  match: Matcher.Match,
+  viewLength: number,
+  lowerPadPercentage = 30,
+) {
+  const matchLength = match.end - match.start;
+  if (matchLength >= viewLength)
+    return {
+      lowerPads: 0,
+      upperPads: 0,
+      lower: match.start,
+      upper: Math.min(match.start + viewLength, match.end),
+      isOverflow: true,
+    };
+
+  const pads = viewLength - matchLength;
+  const lowerPads = Math.floor((pads * lowerPadPercentage) / 100);
+  return {
+    lowerPads,
+    upperPads: pads - lowerPads,
+
+    lower: match.start,
+    upper: match.end,
+    isOverflow: false,
+  };
 }
