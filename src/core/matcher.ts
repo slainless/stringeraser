@@ -2,7 +2,11 @@ export class Matcher {
   private trie: Matcher.TrieNode;
   private patterns: RegExp[];
 
-  constructor(strings: string[], regexPatterns: (string | RegExp)[]) {
+  constructor(
+    strings: string[],
+    regexPatterns: (string | RegExp)[],
+    private caseSensitive = false,
+  ) {
     this.trie = this.buildTrie(strings);
     this.patterns = regexPatterns.map((regex) => new RegExp(regex, "g"));
   }
@@ -10,8 +14,9 @@ export class Matcher {
   buildTrie(strings: string[]) {
     const root: Matcher.TrieNode = {};
     for (const str of strings) {
+      const transformed = this.caseSensitive ? str : str.toLocaleLowerCase();
       let node = root;
-      for (const char of str) {
+      for (const char of transformed) {
         if (!node[char]) node[char] = {};
         node = node[char];
       }
@@ -22,13 +27,14 @@ export class Matcher {
   }
 
   searchWithTrie(text: string) {
+    const transformed = this.caseSensitive ? text : text.toLocaleLowerCase();
     const matches: Matcher.Match[] = [];
-    const n = text.length;
+    const n = transformed.length;
 
     for (let i = 0; i < n; i++) {
       let node = this.trie;
       for (let j = i; j < n; j++) {
-        const char = text[j];
+        const char = transformed[j];
         if (!node[char]) break;
         node = node[char];
         if (node.isEnd) {
