@@ -25,7 +25,7 @@ export function ToolbarPane() {
         <TextArea
           autoResize
           placeholder="Separated by newline"
-          class="w-72 mb-2 max-h-48 overflow-auto"
+          class="w-72 mb-2 max-h-48 overflow-auto font-mono"
           value={strings().join("\n")}
           readOnly={shouldBeLocked()}
           onChange={(event) => {
@@ -38,7 +38,7 @@ export function ToolbarPane() {
         <TextArea
           autoResize
           placeholder="Separated by newline"
-          class="w-72 max-h-48 overflow-auto"
+          class="w-72 max-h-48 overflow-auto font-mono"
           value={regexps().join("\n")}
           readOnly={shouldBeLocked()}
           onChange={(event) => {
@@ -46,17 +46,6 @@ export function ToolbarPane() {
           }}
         />
       </TextFieldRoot>
-      <div>
-        <Button
-          variant={"destructive"}
-          disabled={!shouldBeLocked()}
-          onClick={(event) => {
-            setText(strip(store.text, Object.values(store.selections)));
-          }}
-        >
-          Delete Selection
-        </Button>
-      </div>
     </div>
   );
 }
