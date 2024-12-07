@@ -4,15 +4,15 @@ import "@unocss/reset/sanitize/sanitize.css";
 import "@unocss/reset/sanitize/assets.css";
 import { StoreProvider } from "./components/store-provider";
 import { ToolbarPane } from "./components/toolbar-pane";
-import { OutputPane } from "./components/output-pane";
+import { MatchPane } from "./components/match-pane";
 
 function App() {
   return (
     <div class="min-h-[100vh]">
       <StoreProvider>
-        <div class="sticky grid grid-cols-[max-content_max-content] min-h-[inherit]">
+        <div class="fixed grid grid-cols-[max-content_max-content] h-[100vh]">
           <ToolbarPane />
-          <OutputPane />
+          <MatchPane />
         </div>
       </StoreProvider>
     </div>
