@@ -13,20 +13,32 @@ export function MatchPaneToolbar() {
     <div class="p-3 bg-slate-2/50 backdrop-blur flex gap-2">
       <Button
         variant={"default"}
-        onClick={(event) => {
+        onClick={() => {
           select(store.matches, selectionLength() < 1);
         }}
       >
         {selectionLength() > 0 ? "Unselect all" : "Select all"}
       </Button>
       <Button
+        variant={"default"}
+        onClick={() => {
+          const unselected = store.matches.filter(
+            (match) => match.index! in store.selections === false,
+          );
+          select(Object.values(store.selections), false);
+          select(unselected, true);
+        }}
+      >
+        Flip selection
+      </Button>
+      <Button
         variant={!shouldBeLocked() ? "default" : "destructive"}
         disabled={!shouldBeLocked()}
-        onClick={(event) => {
+        onClick={() => {
           setText(strip(store.text, Object.values(store.selections)));
         }}
       >
-        Delete Selection
+        Delete Selected
       </Button>
     </div>
   );
