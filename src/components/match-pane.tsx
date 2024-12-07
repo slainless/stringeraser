@@ -77,7 +77,7 @@ export function MatchPane() {
 
   return (
     <div class="p-5 h-[inherit] overflow-y-auto w-md border-r border-r-solid border-r-slate-2">
-      <div class="-mx-5 -mt-5 -top-5 sticky top-0 mb-5">
+      <div class="-mx-5 -mt-5 -top-5 sticky -top-5 mb-5">
         <PaneHeader title="Matches" class="position-initial mb-0" />
         <Show when={store.matches?.length > 0}>
           <MatchPaneToolbar />

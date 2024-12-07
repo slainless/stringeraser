@@ -5,7 +5,7 @@ import { StoreContext } from "./store";
 import { PaneHeader } from "./pane-header";
 
 export function ToolbarPane() {
-  const { store, setPatterns, setText } = useContext(StoreContext);
+  const { store, setPatterns } = useContext(StoreContext);
 
   const strings = createMemo(() => store.lookup.strings);
   const regexps = createMemo(() => store.lookup.regexps);
