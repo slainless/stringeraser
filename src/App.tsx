@@ -3,7 +3,8 @@ import solidLogo from "./assets/solid.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
 import "uno.css";
-import { Button } from "./components/ui/button";
+import "@unocss/reset/sanitize/sanitize.css";
+import "@unocss/reset/sanitize/assets.css";
 
 function App() {
   const [count, setCount] = createSignal(0);
