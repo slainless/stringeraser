@@ -1,7 +1,8 @@
 import type { Matcher } from "@/core/matcher";
-import { Checkbox, CheckboxControl } from "./ui/checkbox";
+import { Checkbox, CheckboxControl, CheckboxLabel } from "./ui/checkbox";
 import { useContext } from "solid-js";
 import { StoreContext } from "./store";
+import { cn } from "@/libs/cn";
 
 export interface MatchPaneItemProps {
   item: Matcher.Match;
@@ -12,34 +13,37 @@ export function MatchPaneItem(props: MatchPaneItemProps) {
   const { store, select } = useContext(StoreContext);
   const slices = slice(props.item, props.text);
 
+  const isSelected = () => props.item.index?.toString()! in store.selections;
+
   return (
-    <div class="grid grid-cols-[max-content_auto] gap-col-2 w-full">
-      <div class="flex items-center justify-center">
-        <Checkbox
-          checked={props.item.index?.toString()! in store.selections}
-          onChange={(checked) => {
-            select(props.item, checked);
-          }}
-        >
-          <CheckboxControl />
-        </Checkbox>
-      </div>
-      <div>
+    <Checkbox
+      checked={isSelected()}
+      onChange={(checked) => {
+        select(props.item, checked);
+      }}
+      class="flex items-center space-x-2 w-full"
+    >
+      <CheckboxControl />
+      <CheckboxLabel class="flex-grow-1">
         <div>
-          <span>
-            <span>{slices.prefix}</span>
-            <span>{slices.lowerPad}</span>
-            <span class="bg-blue-2">{slices.match}</span>
-            <span>{slices.upperPad}</span>
-            <span>{slices.suffix}</span>
-          </span>
+          <div>
+            <span>
+              <span>{slices.prefix}</span>
+              <span>{slices.lowerPad}</span>
+              <span class={cn(isSelected() ? "bg-red-2" : "bg-blue-2")}>
+                {slices.match}
+              </span>
+              <span>{slices.upperPad}</span>
+              <span>{slices.suffix}</span>
+            </span>
+          </div>
+          <div class="text-xs">
+            <span>Matched with: </span>
+            <span>{props.item.match}</span>
+          </div>
         </div>
-        <div class="text-xs">
-          <span>Matched with: </span>
-          <span>{props.item.match}</span>
-        </div>
-      </div>
-    </div>
+      </CheckboxLabel>
+    </Checkbox>
   );
 }
 
