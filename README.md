@@ -8,3 +8,6 @@
 ![alt text](./assets/image.png)
 
 A simple, commisioned app to help with selective string removal across a document/text.
+
+TODO:
+- [ ] Use [lexical](https://lexical.dev/) in the text pane for more robust and user friendly contenteditable
