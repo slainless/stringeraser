@@ -10,7 +10,7 @@ export function MatchPaneToolbar() {
   const shouldBeLocked = () => selectionLength() > 0;
 
   return (
-    <div class="p-3 bg-slate-2/50 backdrop-blur flex gap-2">
+    <div class="h-14 px-3 items-center bg-slate-2/50 backdrop-blur flex gap-2">
       <Button
         variant={"default"}
         onClick={() => {
