@@ -42,7 +42,7 @@ export function TextPane() {
 
   return (
     <div>
-      <div class="sticky top-0 z-1 mb-5">
+      <div class="sticky top-0 z-1">
         <PaneHeader
           title={shouldBeLocked() ? "Text (Locked)" : "Text"}
           class="position-initial mb-0"
