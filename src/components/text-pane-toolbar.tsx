@@ -3,10 +3,12 @@ import { Button } from "./ui/button";
 import { StoreContext } from "./store";
 
 export function TextPaneToolbar() {
-  const [isUploadLocked, setIsUploadLocked] = createSignal(false);
-  const { store, setFile, saveChangesToFile } = useContext(StoreContext);
+  const { store, setFile, saveChangesToFile, closeFile } =
+    useContext(StoreContext);
   const file = () => store.file;
   const isChanged = () => store.file?.text !== store.text;
+
+  const [isUploadLocked, setIsUploadLocked] = createSignal(false);
 
   return (
     <div class="h-14 px-3 items-center bg-slate-2/50 flex backdrop-blur gap-2">
@@ -36,6 +38,13 @@ export function TextPaneToolbar() {
         </Switch>
       </Button>
       <Show when={file() != null}>
+        <Button
+          variant="outline"
+          class="order-first"
+          onClick={() => closeFile()}
+        >
+          Close file
+        </Button>
         <Button
           variant="destructive"
           disabled={!isChanged()}

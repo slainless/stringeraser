@@ -67,6 +67,18 @@ export function StoreProvider(props: ParentProps) {
         setValue("file", "text", text);
       });
     },
+    closeFile() {
+      return fileMutex.runExclusive(async () => {
+        const file = value.file?.file;
+        if (file == null) return;
+
+        setValue(
+          produce((store) => {
+            store.file = undefined;
+          }),
+        );
+      });
+    },
   };
 
   return (

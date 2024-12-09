@@ -37,6 +37,7 @@ export interface StoreContext {
   select(match: Matcher.Match | Matcher.Match[], select: boolean): void;
   setFile(fileHandle: FileSystemFileHandle): Promise<void>;
   saveChangesToFile(): Promise<void>;
+  closeFile(): Promise<void>;
 }
 
 export const StoreContext = createContext<StoreContext>({
@@ -48,4 +49,5 @@ export const StoreContext = createContext<StoreContext>({
   select: () => void 0,
   setFile: () => Promise.resolve(),
   saveChangesToFile: () => Promise.resolve(),
+  closeFile: () => Promise.resolve(),
 });
