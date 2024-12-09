@@ -1,9 +1,11 @@
 import { createStore, produce } from "solid-js/store";
 import { DEFAULT_STORE, StoreContext, type Store } from "./store";
-import type { ParentProps } from "solid-js";
+import { untrack, type ParentProps } from "solid-js";
+import { Mutex } from "async-mutex";
 
 export function StoreProvider(props: ParentProps) {
   const [value, setValue] = createStore<Store>(DEFAULT_STORE());
+  const fileMutex = untrack(() => new Mutex());
 
   const context: StoreContext = {
     store: value,
@@ -41,25 +43,29 @@ export function StoreProvider(props: ParentProps) {
         }),
       );
     },
-    async setFile(fileHandle) {
-      const file = await fileHandle.getFile();
-      const text = await file.text();
-      setValue("text", text);
-      setValue("file", { handle: fileHandle, file, text });
-    },
-    async saveChangesToFile() {
-      const text = value.text;
-      const handle = value.file?.handle;
-
-      if (handle == null) return;
-
-      const writer = await handle.createWritable({
-        keepExistingData: false,
+    setFile(fileHandle) {
+      return fileMutex.runExclusive(async () => {
+        const file = await fileHandle.getFile();
+        const text = await file.text();
+        setValue("text", text);
+        setValue("file", { handle: fileHandle, file, text });
       });
+    },
+    saveChangesToFile() {
+      return fileMutex.runExclusive(async () => {
+        const text = value.text;
+        const handle = value.file?.handle;
 
-      await writer.write(text);
-      await writer.close();
-      setValue("file", "text", text);
+        if (handle == null) return;
+
+        const writer = await handle.createWritable({
+          keepExistingData: false,
+        });
+
+        await writer.write(text);
+        await writer.close();
+        setValue("file", "text", text);
+      });
     },
   };
 
