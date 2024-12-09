@@ -2,6 +2,7 @@ import { createEffect, createMemo, useContext } from "solid-js";
 import { StoreContext } from "./store";
 import { PaneHeader } from "./pane-header";
 import type { Matcher } from "@/core/matcher";
+import { TextPaneToolbar } from "./text-pane-toolbar";
 
 export function TextPane() {
   const { store, setText } = useContext(StoreContext);
@@ -41,10 +42,13 @@ export function TextPane() {
 
   return (
     <div>
-      <PaneHeader
-        title={shouldBeLocked() ? "Text (Locked)" : "Text"}
-        class="mb-0"
-      />
+      <div class="sticky top-0 z-1 mb-5">
+        <PaneHeader
+          title={shouldBeLocked() ? "Text (Locked)" : "Text"}
+          class="position-initial mb-0"
+        />
+        <TextPaneToolbar />
+      </div>
       <div class="p-5 relative overflow-x-auto">
         <span
           ref={contentBox}
