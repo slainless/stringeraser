@@ -41,6 +41,26 @@ export function StoreProvider(props: ParentProps) {
         }),
       );
     },
+    async setFile(fileHandle) {
+      const file = await fileHandle.getFile();
+      const text = await file.text();
+      setValue("text", text);
+      setValue("file", { handle: fileHandle, file, text });
+    },
+    async saveChangesToFile() {
+      const text = value.text;
+      const handle = value.file?.handle;
+
+      if (handle == null) return;
+
+      const writer = await handle.createWritable({
+        keepExistingData: false,
+      });
+
+      await writer.write(text);
+      await writer.close();
+      setValue("file", "text", text);
+    },
   };
 
   return (

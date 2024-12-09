@@ -11,6 +11,11 @@ export interface Store {
 
   selections: Record<string, Matcher.Match>;
   matches: Matcher.Match[];
+  file?: {
+    handle: FileSystemFileHandle;
+    file: File;
+    text: string;
+  };
 }
 
 export const DEFAULT_STORE = (): Store => ({
@@ -30,6 +35,8 @@ export interface StoreContext {
   setMatches(matches: Matcher.Match[]): void;
   clearSelections(): void;
   select(match: Matcher.Match | Matcher.Match[], select: boolean): void;
+  setFile(fileHandle: FileSystemFileHandle): Promise<void>;
+  saveChangesToFile(): Promise<void>;
 }
 
 export const StoreContext = createContext<StoreContext>({
@@ -39,4 +46,6 @@ export const StoreContext = createContext<StoreContext>({
   setMatches: () => void 0,
   clearSelections: () => void 0,
   select: () => void 0,
+  setFile: () => Promise.resolve(),
+  saveChangesToFile: () => Promise.resolve(),
 });
