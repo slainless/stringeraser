@@ -19,7 +19,8 @@ import { PaneHeader } from "./pane-header";
 import { MatchPaneToolbar } from "./match-pane-toolbar";
 
 export function MatchPane() {
-  const { store, clearSelections, setMatches } = useContext(StoreContext);
+  const { store, select, clearSelections, setMatches } =
+    useContext(StoreContext);
   const [errors, setErrors] = createSignal<JSX.Element>();
 
   const filteredPatterns = createMemo(() => {
@@ -102,9 +103,21 @@ export function MatchPane() {
             <div class="text-foreground/30">No matching pattern found</div>
           </Match>
           <Match when={store.matches.length > 0}>
-            <For each={store.matches}>
-              {(item) => <MatchPaneItem item={item} text={store.text} />}
-            </For>
+            <Index each={store.matches}>
+              {(item) => {
+                const isSelected = () =>
+                  item().index?.toString()! in store.selections;
+
+                return (
+                  <MatchPaneItem
+                    match={item()}
+                    isSelected={isSelected()}
+                    onCheck={select}
+                    slice={slice(item(), store.text)}
+                  />
+                );
+              }}
+            </Index>
           </Match>
         </Switch>
       </div>
@@ -114,3 +127,54 @@ export function MatchPane() {
 
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
 const isEmpty = (v?: any | any[]) => v == null || v === "" || v?.length < 1;
+
+function slice(item: Matcher.Match, text: string) {
+  const bounds = calculateSliceBound(item, 40);
+
+  let match = text.slice(bounds.lower, bounds.upper + 1);
+  if (bounds.isOverflow) match += "...";
+
+  const lowerPad = text.slice(bounds.lower - bounds.lowerPads, bounds.lower);
+  const upperPad = text.slice(
+    bounds.upper + 1,
+    bounds.upper + bounds.upperPads + 1,
+  );
+  const prefix = bounds.lower > 0 && !bounds.isOverflow ? "..." : "";
+  const suffix =
+    bounds.upper < text.length - 1 && !bounds.isOverflow ? "..." : "";
+
+  return {
+    match,
+    lowerPad,
+    upperPad,
+    prefix,
+    suffix,
+  };
+}
+
+function calculateSliceBound(
+  match: Matcher.Match,
+  viewLength: number,
+  lowerPadPercentage = 30,
+) {
+  const matchLength = match.end - match.start;
+  if (matchLength >= viewLength)
+    return {
+      lowerPads: 0,
+      upperPads: 0,
+      lower: match.start,
+      upper: Math.min(match.start + viewLength, match.end),
+      isOverflow: true,
+    };
+
+  const pads = viewLength - matchLength;
+  const lowerPads = Math.floor((pads * lowerPadPercentage) / 100);
+  return {
+    lowerPads,
+    upperPads: pads - lowerPads,
+
+    lower: match.start,
+    upper: match.end,
+    isOverflow: false,
+  };
+}
