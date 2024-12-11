@@ -104,19 +104,14 @@ export function MatchPane() {
           </Match>
           <Match when={store.matches.length > 0}>
             <Index each={store.matches}>
-              {(item) => {
-                const isSelected = () =>
-                  item().index?.toString()! in store.selections;
-
-                return (
-                  <MatchPaneItem
-                    match={item()}
-                    isSelected={isSelected()}
-                    onCheck={select}
-                    slice={slice(item(), store.text)}
-                  />
-                );
-              }}
+              {(item) => (
+                <MatchPaneItem
+                  match={item()}
+                  isSelected={item().index?.toString()! in store.selections}
+                  onCheck={select}
+                  slice={slice(item(), store.text)}
+                />
+              )}
             </Index>
           </Match>
         </Switch>
