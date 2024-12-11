@@ -3,16 +3,8 @@ import { createEffect, useContext } from "solid-js";
 import { StoreContext } from "./store";
 import { on } from "solid-js";
 import { Matcher } from "@/core/matcher";
-import {
-  $getRoot,
-  LineBreakNode,
-  ParagraphNode,
-  TextNode,
-  type LexicalEditor,
-  type SerializedLexicalNode,
-} from "lexical";
-import { produce } from "immer";
-import { unwrap } from "solid-js/store";
+import { $getRoot, $insertNodes } from "lexical";
+import { $generateNodesFromDOM } from "@lexical/html";
 
 export interface StoreReactorProps extends ParentProps {}
 export function StoreReactor(props: StoreReactorProps) {
@@ -47,49 +39,23 @@ export function StoreReactor(props: StoreReactorProps) {
       });
       if (!shouldUpdate) return;
 
-      const nodes = await parse(store.text, store.lexicalEditor);
-      const state = produce(unwrap(store.lexicalState!), (state) => {
-        state.root.children = nodes;
+      store.lexicalEditor!.update(() => {
+        const parser = new DOMParser();
+        const dom = parser.parseFromString(
+          `<p>${format(store.text)}</p>`,
+          "text/html",
+        );
+
+        const nodes = $generateNodesFromDOM(store.lexicalEditor!, dom);
+        $getRoot().clear();
+        $insertNodes(nodes);
       });
-      store.lexicalEditor.setEditorState(
-        store.lexicalEditor.parseEditorState(state),
-      );
     }),
   );
 
   return <>{props.children}</>;
 }
 
-function parse(
-  text: string,
-  editor: LexicalEditor,
-): Promise<SerializedLexicalNode[]> {
-  return new Promise((res) => {
-    editor.update(() => {
-      if (text === "") {
-        return res([new ParagraphNode().exportJSON()]);
-      }
-
-      const nodes = text
-        .split("\n")
-        .flatMap((text) => {
-          return [new TextNode(text), new LineBreakNode()];
-        })
-        .filter((node, index, array) => {
-          if (node instanceof TextNode && node.__text === "") return false;
-          if (index === array.length - 1 && node instanceof LineBreakNode)
-            return false;
-          return true;
-        })
-        .map((node) => node.exportJSON());
-
-      return res([
-        {
-          ...new ParagraphNode().exportJSON(),
-          // @ts-expect-error
-          children: nodes,
-        },
-      ]);
-    });
-  });
+function format(text: string) {
+  return text.replaceAll(/(\r\n|\n)/g, "</br>");
 }
