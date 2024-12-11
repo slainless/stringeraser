@@ -1,5 +1,12 @@
 import type { Matcher } from "@/core/matcher";
-import type { EditorState } from "lexical";
+import type {
+  LexicalEditor,
+  SerializedEditorState,
+  SerializedLineBreakNode,
+  SerializedParagraphNode,
+  SerializedTabNode,
+  SerializedTextNode,
+} from "lexical";
 import { createContext } from "solid-js";
 
 export interface Store {
@@ -18,7 +25,13 @@ export interface Store {
     text: string;
   };
 
-  lexicalState?: EditorState;
+  lexicalEditor?: LexicalEditor;
+  lexicalState?: SerializedEditorState<
+    | SerializedTextNode
+    | SerializedParagraphNode
+    | SerializedLineBreakNode
+    | SerializedTabNode
+  >;
 }
 
 export const DEFAULT_STORE = (): Store => ({
@@ -30,6 +43,7 @@ export const DEFAULT_STORE = (): Store => ({
   selections: {},
   matches: [],
   lexicalState: undefined,
+  lexicalEditor: undefined,
 });
 
 export interface StoreContext {
@@ -42,7 +56,8 @@ export interface StoreContext {
   setFile(fileHandle: FileSystemFileHandle): Promise<void>;
   saveChangesToFile(): Promise<void>;
   closeFile(): Promise<void>;
-  setLexicalState(state: EditorState): void;
+  setLexicalState(state: SerializedEditorState): void;
+  setLexicalEditor(editor: LexicalEditor): void;
 }
 
 export const StoreContext = createContext<StoreContext>({
@@ -56,4 +71,5 @@ export const StoreContext = createContext<StoreContext>({
   saveChangesToFile: () => Promise.resolve(),
   closeFile: () => Promise.resolve(),
   setLexicalState: () => void 0,
+  setLexicalEditor: () => void 0,
 });

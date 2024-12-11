@@ -82,6 +82,13 @@ export function StoreProvider(props: ParentProps) {
     setLexicalState(state) {
       setValue("lexicalState", reconcile(state));
     },
+    setLexicalEditor(editor) {
+      setValue(
+        produce((store) => {
+          store.lexicalEditor = editor;
+        }),
+      );
+    },
   };
 
   return (
