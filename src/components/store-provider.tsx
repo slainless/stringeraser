@@ -84,7 +84,7 @@ export function StoreProvider(props: ParentProps) {
       });
     },
     setLexicalState(state) {
-      setValue("lexicalState", reconcile(state));
+      setValue("lexicalState", state);
     },
     setLexicalEditor(editor) {
       setValue(
