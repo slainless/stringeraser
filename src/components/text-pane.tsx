@@ -2,7 +2,7 @@ import { onMount, useContext } from "solid-js";
 import { StoreContext } from "./store";
 import { PaneHeader } from "./pane-header";
 import { TextPaneToolbar } from "./text-pane-toolbar";
-import { createEditor } from "lexical";
+import { $getRoot, createEditor } from "lexical";
 import { mergeRegister } from "@lexical/utils";
 import { createEmptyHistoryState, registerHistory } from "@lexical/history";
 import { registerPlainText } from "@lexical/plain-text";
@@ -28,7 +28,10 @@ export function TextPane() {
 
     editor.registerUpdateListener(({ editorState }) => {
       setLexicalState(editorState.toJSON());
-      setText(contentBox.textContent ?? "");
+      editor.read(() => {
+        const text = $getRoot().getTextContent();
+        setText(text ?? "");
+      });
     });
 
     editor.setRootElement(contentBox);
