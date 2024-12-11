@@ -1,13 +1,10 @@
-import { Matcher } from "@/core/matcher";
+import type { Matcher } from "@/core/matcher";
 import {
   createEffect,
-  createMemo,
   createSignal,
-  For,
   Index,
   type JSX,
   Match,
-  on,
   Show,
   Switch,
   useContext,
@@ -19,35 +16,16 @@ import { PaneHeader } from "./pane-header";
 import { MatchPaneToolbar } from "./match-pane-toolbar";
 
 export function MatchPane() {
-  const { store, select, clearSelections, setMatches } =
-    useContext(StoreContext);
+  const { store, select } = useContext(StoreContext);
   const [errors, setErrors] = createSignal<JSX.Element>();
 
-  const filteredPatterns = createMemo(() => {
-    return store.lookup.strings.filter(
-      (string) => string != null && string !== "",
-    );
-  });
-
-  const filteredRegexps = createMemo(() => {
-    return store.lookup.regexps.filter(
-      (regexp) => regexp != null && regexp !== "",
-    );
-  });
-
-  createEffect(
-    on([filteredPatterns, filteredRegexps, () => store.text], () => {
-      clearSelections();
-      setErrors();
-    }),
-  );
-
   createEffect(() => {
-    const unsafe: string[] = [];
-    for (const regexp of filteredRegexps())
-      if (safeRegex(regexp) === false) unsafe.push(regexp);
+    if (store.lookup.regexps.length < 1) return setErrors();
 
-    if (unsafe.length < 1) return;
+    const unsafe: string[] = [];
+    for (const regexp of store.lookup.regexps)
+      if (safeRegex(regexp) === false) unsafe.push(regexp);
+    if (unsafe.length < 1) return setErrors();
 
     setErrors(
       <div class="text-red-6">
@@ -61,19 +39,6 @@ export function MatchPane() {
         </Index>
       </div>,
     );
-    return [];
-  });
-
-  createEffect(() => {
-    if (errors() != null) return;
-
-    const matcher = new Matcher(filteredPatterns(), filteredRegexps());
-    const matches = matcher.findMatches(store.text).map((match, index) => {
-      match.index = index;
-      return match;
-    });
-
-    setMatches(matches);
   });
 
   return (
@@ -92,7 +57,7 @@ export function MatchPane() {
           <Match
             when={
               isEmpty(store.text) ||
-              (isEmpty(filteredPatterns()) && isEmpty(filteredRegexps()))
+              (isEmpty(store.lookup.regexps) && isEmpty(store.lookup.strings))
             }
           >
             <div class="text-foreground/30">

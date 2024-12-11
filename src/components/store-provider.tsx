@@ -2,6 +2,7 @@ import { createStore, produce, reconcile } from "solid-js/store";
 import { DEFAULT_STORE, StoreContext, type Store } from "./store";
 import { untrack, type ParentProps } from "solid-js";
 import { Mutex } from "async-mutex";
+import { StoreReactor } from "./store-reactor";
 
 export function StoreProvider(props: ParentProps) {
   const [value, setValue] = createStore<Store>(DEFAULT_STORE());
@@ -96,7 +97,7 @@ export function StoreProvider(props: ParentProps) {
 
   return (
     <StoreContext.Provider value={context}>
-      {props.children}
+      <StoreReactor>{props.children}</StoreReactor>
     </StoreContext.Provider>
   );
 }
