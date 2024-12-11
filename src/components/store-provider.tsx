@@ -1,4 +1,4 @@
-import { createStore, produce } from "solid-js/store";
+import { createStore, produce, reconcile } from "solid-js/store";
 import { DEFAULT_STORE, StoreContext, type Store } from "./store";
 import { untrack, type ParentProps } from "solid-js";
 import { Mutex } from "async-mutex";
@@ -78,6 +78,9 @@ export function StoreProvider(props: ParentProps) {
           }),
         );
       });
+    },
+    setLexicalState(state) {
+      setValue("lexicalState", reconcile(state));
     },
   };
 
