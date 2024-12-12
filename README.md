@@ -6,9 +6,7 @@
 ![Bun](https://img.shields.io/badge/Bun-%23000000.svg?style=for-the-badge&logo=bun&logoColor=white)
 ![Shadcn](https://img.shields.io/badge/shadcn%2Fui-000000?style=for-the-badge&logo=shadcnui&logoColor=white)
 
-![alt text](./assets/image.png)
-
 A simple, commisioned app to help with selective string removal across a document/text.
 
-TODO:
-- [ ] Use [lexical](https://lexical.dev/) in the text pane for more robust and user friendly contenteditable
+![operational](assets/image.png)
+![idle](assets/image-1.png)
