@@ -29,6 +29,7 @@
     "clsx": "^2.1.1",
     "immer": "^10.1.1",
     "lexical": "^0.21.0",
+    "lucide-solid": "^0.468.0",
     "safe-regex2": "^4.0.0",
     "solid-js": "^1.9.3",
     "tailwind-merge": "^2.5.5",
