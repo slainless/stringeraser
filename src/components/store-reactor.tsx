@@ -60,8 +60,14 @@ export function StoreReactor(props: StoreReactorProps) {
   return <>{props.children}</>;
 }
 
+function escapeHTML(str: string) {
+  const div = document.createElement("div");
+  div.innerText = str;
+  return div.innerHTML;
+}
+
 function format(text: string) {
-  return text.replaceAll(/(\r\n|\n)/g, "</br>");
+  return escapeHTML(text).replaceAll(/(\r\n|\n)/g, "</br>");
 }
 
 const isEmpty = (string: string) => string != null && string !== "";
