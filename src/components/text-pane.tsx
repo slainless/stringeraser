@@ -6,6 +6,7 @@ import { $getRoot, createEditor } from "lexical";
 import { mergeRegister } from "@lexical/utils";
 import { createEmptyHistoryState, registerHistory } from "@lexical/history";
 import { registerPlainText } from "@lexical/plain-text";
+import { TextPaneHighlighter } from "./text-pane-highligher";
 
 export function TextPane() {
   const { store, setText, setLexicalState, setLexicalEditor } =
@@ -54,7 +55,7 @@ export function TextPane() {
           ref={contentBox}
           contentEditable={!shouldBeLocked()}
           class={
-            "outline-none inline-block w-full overflow-x-auto whitespace-pre-wrap"
+            "outline-none inline-block w-full overflow-x-auto whitespace-pre-wrap relative z-1"
           }
         />
         <span
@@ -65,6 +66,7 @@ export function TextPane() {
         >
           Insert target text to be matched against
         </span>
+        <TextPaneHighlighter class="absolute top-5 z-0" />
       </div>
     </div>
   );
