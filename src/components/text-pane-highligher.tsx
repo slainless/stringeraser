@@ -28,7 +28,7 @@ export function TextPaneHighlighter(props: TextPaneHighlighterProps) {
       lastIndex = seq.index;
     }
 
-    build += store.text.slice(lastIndex);
+    build += escapeHTML(store.text.slice(lastIndex));
     build = build.replaceAll(/\r\n|\n/g, "<br/>");
 
     highlighter.innerHTML = build ?? "";
