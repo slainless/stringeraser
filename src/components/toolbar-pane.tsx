@@ -66,6 +66,7 @@ export function ToolbarPane() {
               <div class="flex gap-2 mb-2">
                 <Button
                   class="w-8 h-8 p-0"
+                  disabled={shouldBeLocked()}
                   onClick={() => {
                     const result = [...store.lookup.fullstrings];
                     result.splice(index(), 1);
@@ -103,6 +104,7 @@ export function ToolbarPane() {
         <div>
           <Button
             class="w-8 h-8 p-0"
+            disabled={shouldBeLocked()}
             onClick={() =>
               setPatterns(store.lookup.strings, store.lookup.regexps, [
                 ...store.lookup.fullstrings,
