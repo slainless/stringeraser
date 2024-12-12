@@ -24,13 +24,14 @@ export function TextPaneHighlighter(props: TextPaneHighlighterProps) {
     let build = "";
     let lastIndex = 0;
     for (const seq of sequences) {
-      build += store.text.slice(lastIndex, seq.index) + seq.tag;
+      build += escapeHTML(store.text.slice(lastIndex, seq.index)) + seq.tag;
       lastIndex = seq.index;
     }
 
     build += store.text.slice(lastIndex);
+    build = build.replaceAll(/\r\n|\n/g, "<br/>");
 
-    highlighter.innerHTML = build.replaceAll(/\r\n|\n/g, "<br/>");
+    highlighter.innerHTML = build ?? "";
   });
 
   return (
@@ -44,6 +45,12 @@ export function TextPaneHighlighter(props: TextPaneHighlighterProps) {
       {}
     </div>
   );
+}
+
+function escapeHTML(str: string) {
+  const div = document.createElement("div");
+  div.innerText = str;
+  return div.innerHTML;
 }
 
 function tagSequences(

@@ -66,7 +66,7 @@ export function TextPane() {
         >
           Insert target text to be matched against
         </span>
-        <TextPaneHighlighter class="absolute top-5 z-0" />
+        <TextPaneHighlighter class="absolute top-5 z-0 pr-5" />
       </div>
     </div>
   );
