@@ -15,6 +15,7 @@ export interface Store {
   lookup: {
     strings: string[];
     regexps: string[];
+    fullstrings: string[];
   };
 
   selections: Record<string, Matcher.Match>;
@@ -39,6 +40,7 @@ export const DEFAULT_STORE = (): Store => ({
   lookup: {
     strings: [],
     regexps: [],
+    fullstrings: [],
   },
   selections: {},
   matches: [],
@@ -49,7 +51,11 @@ export const DEFAULT_STORE = (): Store => ({
 export interface StoreContext {
   store: Store;
   setText(string: string): void;
-  setPatterns(strings: string[], regexps: string[]): void;
+  setPatterns(
+    strings: string[],
+    regexps: string[],
+    fullstrings: string[],
+  ): void;
   setMatches(matches: Matcher.Match[]): void;
   clearSelections(): void;
   select(match: Matcher.Match | Matcher.Match[], select: boolean): void;

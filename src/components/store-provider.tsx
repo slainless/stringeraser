@@ -13,10 +13,11 @@ export function StoreProvider(props: ParentProps) {
     setText(string) {
       setValue("text", string);
     },
-    setPatterns(strings, regexps) {
+    setPatterns(strings, regexps, fullstrings) {
       setValue("lookup", {
-        strings: strings.filter(isEmpty),
-        regexps: regexps.filter(isEmpty),
+        strings,
+        regexps,
+        fullstrings,
       });
     },
     setMatches(matches) {
@@ -101,5 +102,3 @@ export function StoreProvider(props: ParentProps) {
     </StoreContext.Provider>
   );
 }
-
-const isEmpty = (string: string) => string != null && string !== "";

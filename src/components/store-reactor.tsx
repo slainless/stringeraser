@@ -10,17 +10,21 @@ export interface StoreReactorProps extends ParentProps {}
 export function StoreReactor(props: StoreReactorProps) {
   const { store, clearSelections, setMatches } = useContext(StoreContext);
 
+  const strings = () => store.lookup.strings.filter(isEmpty);
+  const regexps = () => store.lookup.regexps.filter(isEmpty);
+  const fullstrings = () => store.lookup.fullstrings.filter(isEmpty);
+
   createEffect(() => {
     clearSelections();
 
     if (
-      (store.lookup.strings.length < 1 && store.lookup.regexps.length < 1) ||
+      (regexps().length < 1 && strings().length < 1) ||
       store.text == null ||
       store.text === ""
     )
       return setMatches([]);
 
-    const matcher = new Matcher(store.lookup.strings, store.lookup.regexps);
+    const matcher = new Matcher([...strings(), ...fullstrings()], regexps());
     const matches = matcher.findMatches(store.text).map((match, index) => {
       match.index = index;
       return match;
@@ -59,3 +63,5 @@ export function StoreReactor(props: StoreReactorProps) {
 function format(text: string) {
   return text.replaceAll(/(\r\n|\n)/g, "</br>");
 }
+
+const isEmpty = (string: string) => string != null && string !== "";
