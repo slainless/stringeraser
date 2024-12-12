@@ -8,5 +8,8 @@
 
 A simple, commisioned app to help with selective string removal across a document/text.
 
+- [x] [Lexical](https://lexical.dev) integrated
+- [x] File upload & direct save (Chromium only)
+
 ![operational](assets/image.png)
 ![idle](assets/image-1.png)
