@@ -50,7 +50,7 @@ export function TextPane() {
         />
         <TextPaneToolbar />
       </div>
-      <div class="p-5 relative overflow-x-auto">
+      <div class="p-5 relative overflow-x-auto z-0">
         <div
           ref={contentBox}
           contentEditable={!shouldBeLocked()}
