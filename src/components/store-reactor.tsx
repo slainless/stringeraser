@@ -1,10 +1,12 @@
 import type { ParentProps } from "solid-js";
 import { createEffect, useContext } from "solid-js";
 import { StoreContext } from "./store";
-import { on } from "solid-js";
 import { Matcher } from "@/core/matcher";
-import { $getRoot, $insertNodes } from "lexical";
-import { $generateNodesFromDOM } from "@lexical/html";
+import {
+  $getRoot,
+  type SerializedParagraphNode,
+  type SerializedTextNode,
+} from "lexical";
 
 export interface StoreReactorProps extends ParentProps {}
 export function StoreReactor(props: StoreReactorProps) {
@@ -33,41 +35,55 @@ export function StoreReactor(props: StoreReactorProps) {
     setMatches(matches);
   });
 
-  createEffect(
-    on([() => store.lexicalEditor, () => store.text], async () => {
-      if (store.lexicalEditor == null) return;
+  createEffect(() => {
+    if (store.lexicalEditor == null) return;
+    const shouldUpdate = store.lexicalEditor.read(() => {
+      const currentText = $getRoot().getTextContent();
+      return currentText !== store.text;
+    });
+    if (!shouldUpdate) return;
 
-      const shouldUpdate = store.lexicalEditor.read(() => {
-        const currentText = $getRoot().getTextContent();
-        return currentText !== store.text;
-      });
-      if (!shouldUpdate) return;
+    const state = store.lexicalEditor.getEditorState().toJSON();
 
-      store.lexicalEditor!.update(() => {
-        const parser = new DOMParser();
-        const dom = parser.parseFromString(
-          `<p>${format(store.text)}</p>`,
-          "text/html",
-        );
+    const nodes = buildLexicalNodes(store.text);
+    state.root.children = [nodes];
 
-        const nodes = $generateNodesFromDOM(store.lexicalEditor!, dom);
-        $getRoot().clear();
-        $insertNodes(nodes);
-      });
-    }),
-  );
+    const editorState = store.lexicalEditor.parseEditorState(state);
+    store.lexicalEditor.setEditorState(editorState);
+  });
 
   return <>{props.children}</>;
 }
 
-function escapeHTML(str: string) {
-  const div = document.createElement("div");
-  div.innerText = str;
-  return div.innerHTML;
-}
-
-function format(text: string) {
-  return escapeHTML(text).replaceAll(/(\r\n|\n)/g, "</br>");
-}
-
 const isEmpty = (string: string) => string != null && string !== "";
+
+function buildLexicalNodes(text: string) {
+  const nodes = text.split(/(\r\n|\n)/).flatMap((text) => {
+    if (text === "\n" || text === "\r\n")
+      return {
+        type: "linebreak",
+        version: 1,
+      };
+
+    return {
+      detail: 0,
+      format: 0,
+      mode: "normal",
+      style: "",
+      text,
+      type: "text",
+      version: 1,
+    } satisfies SerializedTextNode;
+  });
+
+  return {
+    direction: "ltr",
+    format: "",
+    indent: 0,
+    textFormat: 0,
+    textStyle: "",
+    type: "paragraph",
+    version: 1,
+    children: nodes,
+  } satisfies SerializedParagraphNode;
+}
