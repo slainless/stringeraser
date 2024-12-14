@@ -29,7 +29,7 @@ export function TextPaneHighlighter(props: TextPaneHighlighterProps) {
     }
 
     build += escapeHTML(store.text.slice(lastIndex));
-    build = build.replaceAll(/\r\n|\n/g, "<br/>");
+    build = build.replaceAll(/(\r\n|\n)/g, "<br/>");
 
     highlighter.innerHTML = build ?? "";
   });
